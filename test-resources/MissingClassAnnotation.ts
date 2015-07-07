@@ -14,7 +14,6 @@ export class Abstract1 {
 export class Class1 extends Abstract1 {
 
 	public doIt() {
-		//return super.doIt();
 	}
 
 }

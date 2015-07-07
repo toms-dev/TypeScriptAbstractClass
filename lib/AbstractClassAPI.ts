@@ -14,9 +14,9 @@ var processedPrototypes = [];
 export var Config = {
 	ignoreMissingAnnotations: false,
 	throwErrorOnMissingAnnotations: false,
-	reset: function() {
+	reset: function () {
 		for (var i in processedPrototypes) {
-			if (! processedPrototypes.hasOwnProperty(i)) continue;
+			if (!processedPrototypes.hasOwnProperty(i)) continue;
 			var proto = processedPrototypes[i];
 			Reflect.deleteMetadata(KEY_REGULAR_ENFORCED, proto);
 		}
@@ -33,7 +33,7 @@ export function Abstract(constructor):any {
 
 	Reflect.defineMetadata(KEY_IS_ABSTRACT, true, prototype);
 
-	var onlySuperCall = function(instanceProto) {
+	var onlySuperCall = function (instanceProto) {
 		var constructorChain = getProtoChain(instanceProto).map(function (el) {
 			return el.constructor
 		});
@@ -45,7 +45,7 @@ export function Abstract(constructor):any {
 	};
 
 	// TODO: remove return to make the code lighter? because it seems we are always in the value is always true...
-	var notifyMissingAnnotation = function(instanceClassName): boolean {
+	var notifyMissingAnnotation = function (instanceClassName):boolean {
 		if (Config.ignoreMissingAnnotations) return true;
 		//var throwError = false;	// what to do ? :)
 		var message = "You forgot to annotate class '" + instanceClassName + "' with @Class.Regular or" +
@@ -57,25 +57,25 @@ export function Abstract(constructor):any {
 			throw new Exceptions.MissingAnnotation(message);
 		} else {
 			console.warn(message);
-			console.warn("The class '"+instanceClassName+"' is now considered as regular.\n");
+			console.warn("The class '" + instanceClassName + "' is now considered as regular.\n");
 			return true;
 		}
 		return false;
 	};
 
-	var performChecks = function() {
+	var performChecks = function () {
 
 		// Check child classes
 		//var instanceProto = this.constructor.prototype;
 		var instanceProto = Object.getPrototypeOf(this);
 		var instanceClassName = this.constructor.name;
 
-		console.log("Performing checks on " + className + " through "+instanceProto.constructor.name);
+		console.log("Performing checks on " + className + " through " + instanceProto.constructor.name);
 
 		// Check if the check was already done by an annotation or a previous execution on another instance
 		var isAlreadyEnforced = Reflect.hasOwnMetadata(KEY_REGULAR_ENFORCED, instanceProto);
 		if (isAlreadyEnforced) {
-			console.info("ALREADY ENFORCED "+className+" thanks to annotations:D");
+			console.info("ALREADY ENFORCED " + className + " thanks to annotations:D");
 			return;
 		}
 
@@ -116,20 +116,25 @@ export function Abstract(constructor):any {
 	};
 
 	/*var wrapper = new Function(
-		'customAction',
-		'return function ' + className + '() {' +
-		'wrappedConstructor.apply(this, arguments)' +
-		'}'
-	);
-	var result = wrapper(customAction);*/
+	 'customAction',
+	 'return function ' + className + '() {' +
+	 'wrappedConstructor.apply(this, arguments)' +
+	 '}'
+	 );
+	 var result = wrapper(customAction);*/
 	var result = wrappedConstructor;
 	result.prototype = prototype;
 	return result;
 }
 
-export function AbstractMethod(prototype, key, descriptor) {
+export function AbstractMethod(prototype, key, descriptor:TypedPropertyDescriptor<any>) {
 	//console.log("== AbstractMethod", arguments);
 	Reflect.defineMetadata(KEY_IS_ABSTRACT, true, prototype);
+
+	descriptor.value = function () {
+		// TODO: test of this error throwing
+		throw new Error("Abstract method called: " + prototype.constructor.name + "." + key);
+	};
 
 	// setup abstract methods
 	var abstractMethods:string[];
@@ -143,13 +148,15 @@ export function AbstractMethod(prototype, key, descriptor) {
 		abstractMethods.push(key);
 	}
 	Reflect.defineMetadata("abstractMethods", abstractMethods, prototype);
+
+	return descriptor;
 }
 
 export function Class(constructor) {
 	console.log("== Class ", constructor.name);
 	var proto = constructor.prototype;
 	if (Reflect.hasOwnMetadata(KEY_ABSTRACT_METHODS, proto)) {
-		var methodNames: string[] = Reflect.getOwnMetadata(KEY_ABSTRACT_METHODS, proto);
+		var methodNames:string[] = Reflect.getOwnMetadata(KEY_ABSTRACT_METHODS, proto);
 		throw new Exceptions.AbstractMethodInRegularClass(methodNames);
 	}
 
@@ -191,6 +198,15 @@ function getNonImplementedMethods(proto) {
 			// Skip methods that were declared abstract by this class
 			if (protoAbstractMethods.indexOf(methodName) != -1) continue;
 
+			// Check if there is a use of the super call on an abstract method:
+			if (methodsToImplement.indexOf(methodName) != -1) {
+				var pattern = "_super.prototype." + methodName + ".call";
+				if (method.toString().indexOf(pattern) != -1) {
+					// TODO: create exception and test this
+					throw new Error("SEVERE! Using super call on an abstract method in "
+						+ proto.constructor.name + "." + methodName);
+				}
+			}
 			// TODO: Check params count?
 
 			protoNonAbstractMethods.push(methodName);

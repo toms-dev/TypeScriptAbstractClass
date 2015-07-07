@@ -15,7 +15,6 @@ class Abstract1 {
 class Class1 extends Abstract1 {
 
 	public doIt() {
-		return super.doIt();
 	}
 
 }
