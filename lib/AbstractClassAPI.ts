@@ -199,12 +199,15 @@ function getNonImplementedMethods(proto) {
 			if (protoAbstractMethods.indexOf(methodName) != -1) continue;
 
 			// Check if there is a use of the super call on an abstract method:
+			// Note: there is no risk of catching a legit "super" call because if the method
+			// is in the array 'methodsToImplement', it has no valid implementation until then.
 			if (methodsToImplement.indexOf(methodName) != -1) {
 				var pattern = "_super.prototype." + methodName + ".call";
 				if (method.toString().indexOf(pattern) != -1) {
 					// TODO: create exception and test this
-					throw new Error("SEVERE! Using super call on an abstract method in "
-						+ proto.constructor.name + "." + methodName);
+					throw new Exceptions.SuperCallToAbstractMethod(proto.constructor.name + "." + methodName);
+					/*throw new Error("SEVERE! Using super call to an abstract method in "
+						+ proto.constructor.name + "." + methodName);*/
 				}
 			}
 			// TODO: Check params count?

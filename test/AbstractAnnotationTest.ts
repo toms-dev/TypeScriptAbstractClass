@@ -104,4 +104,10 @@ describe("Abstract annotation unit test", () => {
 		}).to.throw(Exceptions.AbstractMethodInRegularClass);
 	});
 
+	it("should throw an exception if a method overriding an abstract method uses the super call", () => {
+		chai.expect(() => {
+			var test = require("../test-resources/SuperCallInAbstractOverride");
+		}).to.throw(Exceptions.SuperCallToAbstractMethod);
+	});
+
 });

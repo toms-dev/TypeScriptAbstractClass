@@ -48,3 +48,9 @@ export class AbstractMethodInRegularClass extends MyError {
 		super("Abstract method in regular class: ["+methods.join(',')+"]");
 	}
 }
+
+export class SuperCallToAbstractMethod extends MyError {
+	constructor(method:string) {
+		super(method+" is using a super call to an abstract method which is not defined!");
+	}
+}
