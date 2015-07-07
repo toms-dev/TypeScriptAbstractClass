@@ -91,4 +91,4 @@ You may also want to take a look in *test-resources* for samples of valid and in
  - proper *package.json*
 
 ###Author
-Tom Guillermin, [www.tomsdev.com](www.tomsdev.com)
+Tom Guillermin, [http://www.tomsdev.com](www.tomsdev.com)
