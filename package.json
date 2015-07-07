@@ -1,0 +1,36 @@
+{
+  "name": "ts-abstract-class",
+  "version": "0.0.1",
+  "author": "Tom Guillermin <tom@tomsdev.com>",
+  "description": "A simple implementation of abstract method validation for typescript",
+  "dependencies": {
+    "reflect-metadata": "^0.1.0",
+    "tsd": "^0.6.3"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/toms-dev/TypeScriptDependencyInjection.git"
+  },
+
+  "keywords": [
+    "dependency",
+    "injection",
+    "typescript",
+    "annotation",
+    "decorator",
+    "framework"
+  ],
+  "files": [
+    "README.md",
+    "index.js",
+    "lib/"
+  ]
+}
