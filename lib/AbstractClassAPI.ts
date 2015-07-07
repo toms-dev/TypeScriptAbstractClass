@@ -2,13 +2,17 @@
 
 import "reflect-metadata";
 
+import Exceptions = require('./Exceptions');
+
 var KEY_IS_REGULAR = "isRegularClass";
 var KEY_IS_ABSTRACT = "isAbstractClass";
 var KEY_REGULAR_ENFORCED = "regularEnforced";
 
+var ignoreMissingAnnotations = false;
+
 export function Abstract(constructor):any {
 	//return constructor;
-	var name = constructor.name;
+	var className = constructor.name;
 	var argCount = constructor.length;
 	var prototype = constructor.prototype;
 
@@ -17,23 +21,32 @@ export function Abstract(constructor):any {
 	var isProcessed = false;
 
 	var performChecks = function() {
-		var className = constructor.name;
-		console.log("Performing checks on ", className);
 
 		// Check child classes
-		var instanceProto = this.constructor.prototype;
-		// Enforce only child classes
-		var isRegular = Reflect.hasOwnMetadata(KEY_IS_REGULAR, instanceProto);
-		var isAbstract = Reflect.hasOwnMetadata(KEY_IS_ABSTRACT, instanceProto);
+		//var instanceProto = this.constructor.prototype;
+		var instanceProto = Object.getPrototypeOf(this);
+		var instanceClassName = this.constructor.name;
 
-		if (isAbstract) {
+		console.log("Performing checks on " + className + " through "+instanceProto.constructor.name);
+
+		// Check if the check was already done by an annotation
+		var isAlreadyEnforced = Reflect.hasOwnMetadata(KEY_REGULAR_ENFORCED, instanceProto);
+		if (isAlreadyEnforced) {
+			console.info("ALREADY ENFORCED "+className+" thanks to annotations:D");
+		}
+
+		// Enforce only child classes
+		var isInstanceRegular = Reflect.hasOwnMetadata(KEY_IS_REGULAR, instanceProto);
+		var isInstanceAbstract = Reflect.hasOwnMetadata(KEY_IS_ABSTRACT, instanceProto);
+
+		if (isInstanceAbstract) {
 			// Only allow the super() call! ;)
 			var constructorChain = getProtoChain(instanceProto).map(function (el) {
 				return el.constructor
 			});
 			var callContext = arguments.callee.caller;
 			if (constructorChain.indexOf(callContext) == -1) {
-				throw new Error("Can't instantiate an abstract class!");
+				throw new Exceptions.CantInstantiateAbstractClass(instanceProto);
 			}
 			console.log("ABSTRACT CLASS '" + className + "' BEING INSTANTIATED!");
 		}
@@ -43,22 +56,27 @@ export function Abstract(constructor):any {
 		// their class correctly.
 
 
-		// If the class is not either, someone has forgotten to do something! ;)
-		if (!isAbstract && !isRegular) {
+		// If the class is not either abstract or instance, someone has forgotten to do something! ;)
+		if (!ignoreMissingAnnotations && !isInstanceAbstract && !isInstanceRegular) {
 			var throwError = false;	// what to do ? :)
-			var message = "You forgot to annotate class '" + className + "' with @Class.Regular or" +
+			var message = "You forgot to annotate class '" + instanceClassName + "' with @Class.Regular or" +
 				" @Class.Abstract !\n" +
 				"The abstract class system is designed to resolve problems on app startup only.\n" +
-				"It will lower the performance of the first instanciation of the class.";
+				"Your code will be less safe and it will lower the performances during the first instanciation of" +
+				" the class.";
 			if (throwError) {
 				throw new Error(message);
 			} else {
 				console.warn(message);
+				console.warn("The class '"+instanceClassName+"' is now considered as regular.\n");
+				isInstanceRegular = true;
 			}
 		}
 
 		// Enforce only regular classes
-		if (isRegular && instanceProto != prototype) {
+		console.log("IsInstanceRegular:", isInstanceRegular);
+		if (isInstanceRegular && instanceProto != prototype) {
+			console.log("Enforcing!");
 			// Enforce only once
 			if (!Reflect.hasOwnMetadata(KEY_REGULAR_ENFORCED, instanceProto)) {
 				enforceClass(instanceProto);
@@ -67,17 +85,14 @@ export function Abstract(constructor):any {
 	};
 
 	var wrappedConstructor = function () {
-		if (!isProcessed) {
-			performChecks();
-			isProcessed = true;
-		}
+		performChecks.apply(this);
 		// Call the original constructor
 		constructor.apply(this, arguments);
 	};
 
 	var wrapper = new Function(
 		'customAction',
-		'return function ' + name + '() {' +
+		'return function ' + className + '() {' +
 		'wrappedConstructor.apply(this, arguments)' +
 		'}'
 	);
@@ -187,7 +202,8 @@ function getNonImplementedMethods(proto) {
 function enforceClass(proto) {
 	var nonImpl = getNonImplementedMethods(proto);
 	if (nonImpl.length > 0) {
-		throw new Error("Methods not implemented in " + proto.constructor.name + " : [" + nonImpl.join(',') + "]");
+		throw new Exceptions.MethodNotImplementedException(proto, nonImpl);
+		//throw new Error("Methods not implemented in " + proto.constructor.name + " : [" + nonImpl.join(',') + "]");
 	}
 	// Mark the class as processed
 	Reflect.defineMetadata(KEY_REGULAR_ENFORCED, true, proto);
