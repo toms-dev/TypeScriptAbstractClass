@@ -1,6 +1,6 @@
 {
   "name": "ts-abstract-class",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Tom Guillermin <tom@tomsdev.com>",
   "description": "A simple implementation of abstract method validation for typescript",
   "dependencies": {
@@ -19,7 +19,9 @@
     "type": "git",
     "url": "https://www.github.com/toms-dev/TypeScriptDependencyInjection.git"
   },
-
+  "scripts": {
+    "postinstall": "tsd reinstall; tsd rebundle;"
+  },
   "keywords": [
     "dependency",
     "injection",
@@ -29,8 +31,7 @@
     "framework"
   ],
   "files": [
-    "README.md",
-    "index.js",
+    "index.ts",
     "lib/"
   ]
 }
