@@ -2,12 +2,12 @@
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitAny": false,
-    "removeComments": true,
-    "preserveConstEnums": true,
     "outDir": "./bin",
-    "sourceMap": true
+    "sourceMap": true,
+    "target": "es5"
   },
   "files": [
-    "index.ts"
+    "index.ts",
+    "test/AbstractAnnotationTest.ts"
   ]
 }
