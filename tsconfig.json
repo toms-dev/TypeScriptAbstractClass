@@ -8,6 +8,12 @@
   },
   "files": [
     "index.ts",
-    "test/AbstractAnnotationTest.ts"
+    "test/AbstractAnnotationTest.ts",
+    "test-resources/AbstractMethodInRegularClass.ts",
+    "test-resources/BasicInheritanceSetup.ts",
+    "test-resources/MissingClassAnnotation.ts",
+    "test-resources/MissingMethodImplementation.ts",
+    "test-resources/SimpleAbstractInheritance.ts",
+    "test-resources/SuperCallInAbstractOverride.ts"
   ]
 }
