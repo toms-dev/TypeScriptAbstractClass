@@ -1,5 +1,5 @@
 
-import API = require('../lib/AbstractClassAPI');
+import API = require('../index');
 
 @API.Abstract
 export class Abstract1 {

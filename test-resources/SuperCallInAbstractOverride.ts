@@ -1,5 +1,5 @@
 
-import API = require('../lib/AbstractClassAPI');
+import API = require('../index');
 
 @API.Abstract
 class Abstract1 {
@@ -7,7 +7,7 @@ class Abstract1 {
 	@API.AbstractMethod
 	public doIt() {}
 
-	public anoterMethod() {}
+	public anotherMethod() {}
 
 }
 
