@@ -2,7 +2,7 @@
 /// <reference path="../typings/chai/chai.d.ts" />
 /// <reference path="../typings/sinon/sinon.d.ts" />
 /// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/fix.d.ts" />
+// <reference path="../typings/fix.d.ts" />
 
 import chai = require('chai');
 import sinon = require('sinon');

@@ -2,10 +2,12 @@
   "name": "ts-abstract-class",
   "version": "0.0.2",
   "author": "Tom Guillermin <tom@tomsdev.com>",
+  "homepage": "http://www.tomsdev.com/",
   "description": "A simple implementation of abstract method validation for typescript",
   "dependencies": {
     "reflect-metadata": "^0.1.0",
-    "tsd": "^0.6.3"
+    "tsd": "^0.6.3",
+    "typescript": "^1.7.0-dev.20150901"
   },
   "engines": {
     "node": ">= 0.10.0"

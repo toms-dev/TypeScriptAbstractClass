@@ -109,6 +109,8 @@ export function Abstract(constructor):any {
 		}
 	};
 
+	// Wrap the constructor to perform some checks upon instantiation
+	// Note: this should be only a safe-guard in case the @Class annotation has been forgotten
 	var wrappedConstructor = function () {
 		performChecks.apply(this);
 		// Call the original constructor
@@ -152,6 +154,7 @@ export function AbstractMethod(prototype, key, descriptor:TypedPropertyDescripto
 	return descriptor;
 }
 
+// TODO: this should be replaced by a hook call on the Extended-Class project
 export function Class(constructor) {
 	console.log("== Class ", constructor.name);
 	var proto = constructor.prototype;

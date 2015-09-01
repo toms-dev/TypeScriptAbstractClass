@@ -4,7 +4,9 @@
     "noImplicitAny": false,
     "outDir": "./bin",
     "sourceMap": true,
-    "target": "es5"
+    "target": "ES5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "files": [
     "index.ts",

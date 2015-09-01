@@ -16,7 +16,8 @@ class Greetings {
 }
 ```
 The idea behind this library is that there is currently no simple way of doing abstract classes in TypeScript.
- This library is adding an extra validation step that is performed on code startup when in development environment.
+This library is adding an extra "compilation" step that is performed on code startup when in development
+environment only (we don't want to ruin your production performances!).
 
 **Notice:** This is a work-in-progress and some features are missing.
 
@@ -28,35 +29,36 @@ The idea behind this library is that there is currently no simple way of doing a
 - **Stay in control of performances**. Even if most validation is performed on startup only, you can still disable it for production environment **(WIP)**
 - **Be forgiving**. If another developer forgot a non-critical annotation, a warning can be simply displayed without crashing everything. But that's configurable!
 
-
-## Requirements
-
- - TypeScript compiler 1.5 or higher
- - EcmaScript5-compliant engine (nodejs version >= 0.10 will do fine)
-
-## Getting started
+## Install
 
 First, install the library with npm:
 ```bash
 $ npm install ts-abstract-class --save
 ```
 
-Then, let's import the _Classes API_.
+## Requirements
+
+ - TypeScript compiler 1.7 or higher (`$ npm install -g typescript@next`)
+ - ECMAScript5-compliant engine (nodejs version >= 0.10 will do fine)
+
+## Getting started
+
+Let's import the _Abstract Classes API_.
 ```TypeScript
-	import Class = require('ts-abstract-class');
+	import AbstractClassAPI = require('ts-abstract-class');
 ```
 
 Then, you have to define your abstract classes using the annotation ```@Class.Abstract``` :
 ```TypeScript
-@Class.Abstract
+@AbstractClassAPI.Abstract
 class Greetings {
 	...
 }
 ```
 **Note.** To lighten the syntax, you can store some parts of the API in variables:
 ```
-var Abstract = Class.Abstract,
-	AbstractMethod = Class.AbstractMethod
+var Abstract = AbstractClassAPI.Abstract,
+	AbstractMethod = AbstractClassAPI.AbstractMethod
 ```
 
 Next, you can define the abstract methods that the child classes will have to implement, using ```@Class.AbstractMethod```:
@@ -76,7 +78,7 @@ class Greetings {
 
 Now you can extend your abstract class:
 ```TypeScript
-@Class.Class
+@AbstractClassAPI.Class
 class ChildClass extends Greetings {
 	public doSomething(): void {
 		console.log("More code!");
@@ -89,7 +91,7 @@ class ChildClass extends Greetings {
 **The annotation is optional**. Its purpose is to improve performances : the library will check at startup that the class is correctly extending its parent. If the annotation is not set, this check will be performed once when creating the first instance of the class.
 
 ## Configuration
-To do. Sorry. Still, you may take a look in `Class.Config`.
+To do. Sorry. Still, you may take a look in `AbstractClassAPI.Config`.
 
 ## Examples
 
