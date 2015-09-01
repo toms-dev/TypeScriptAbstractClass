@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "mocha bin/test",
-    "postinstall": "tsd reinstall; tsd rebundle;"
+    "install": "tsd reinstall ; tsd rebundle ; tsc"
   },
   "keywords": [
     "dependency",
@@ -36,5 +36,8 @@
   "files": [
     "index.ts",
     "lib/"
-  ]
+  ],
+  "typescript": {
+    "definition": "typings.d.ts"
+  }
 }
