@@ -22,7 +22,7 @@
     "url": "https://www.github.com/toms-dev/TypeScriptDependencyInjection.git"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha bin/test",
     "postinstall": "tsd reinstall; tsd rebundle;"
   },
   "keywords": [
